@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.env
+.env.local
+
+.firebase/
+*debug.log
+firepit-log.txt
+
+# Local exports, private settings, and local verification screenshots
+.env.*
+!.env.example
+!.env.production
+.DS_Store
+*.log
+*-verification.png
+preview.png

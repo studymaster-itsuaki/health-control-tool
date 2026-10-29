@@ -1,0 +1,116 @@
+{
+  "checkedAt": "2026-10-24T07:22:51.939Z",
+  "projectId": "health-control-tool",
+  "checks": [
+    {
+      "name": "保存 profiles",
+      "passed": true
+    },
+    {
+      "name": "サーバー再取得 profiles",
+      "passed": true
+    },
+    {
+      "name": "保存 dailyLogs",
+      "passed": true
+    },
+    {
+      "name": "サーバー再取得 dailyLogs",
+      "passed": true
+    },
+    {
+      "name": "保存 exerciseLogs",
+      "passed": true
+    },
+    {
+      "name": "サーバー再取得 exerciseLogs",
+      "passed": true
+    },
+    {
+      "name": "保存 weeklyReviews",
+      "passed": true
+    },
+    {
+      "name": "サーバー再取得 weeklyReviews",
+      "passed": true
+    },
+    {
+      "name": "保存 profiles",
+      "passed": true
+    },
+    {
+      "name": "サーバー再取得 profiles",
+      "passed": true
+    },
+    {
+      "name": "保存 exerciseLogs",
+      "passed": true
+    },
+    {
+      "name": "サーバー再取得 exerciseLogs",
+      "passed": true
+    },
+    {
+      "name": "同一アカウントのプロフィール別運動記録の分離",
+      "passed": true
+    },
+    {
+      "name": "週レビューのプロフィール分離",
+      "passed": true
+    },
+    {
+      "name": "別SDKクライアントへのリアルタイム反映",
+      "passed": true
+    },
+    {
+      "name": "SDKでサーバーから再取得",
+      "passed": true
+    },
+    {
+      "name": "未認証アクセス拒否",
+      "passed": true
+    },
+    {
+      "name": "別アカウントの読取拒否",
+      "passed": true
+    },
+    {
+      "name": "別アカウントの更新拒否",
+      "passed": true
+    }
+  ],
+  "cleanup": [
+    {
+      "kind": "document",
+      "success": true
+    },
+    {
+      "kind": "document",
+      "success": true
+    },
+    {
+      "kind": "document",
+      "success": true
+    },
+    {
+      "kind": "document",
+      "success": true
+    },
+    {
+      "kind": "document",
+      "success": true
+    },
+    {
+      "kind": "document",
+      "success": true
+    },
+    {
+      "kind": "temporary-account",
+      "success": true
+    },
+    {
+      "kind": "temporary-account",
+      "success": true
+    }
+  ]
+}
