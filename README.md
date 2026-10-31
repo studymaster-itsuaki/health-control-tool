@@ -1,5 +1,9 @@
 # からだノート — Ver.1 / 第3段階
 
+公開サイト: https://studymaster-itsuaki.github.io/health-control-tool/
+
+2026-10-31にGitHub Pagesで公開。mainへの反映時にテスト・ビルド後、自動公開します。Firebase Authenticationの承認済みドメインも確認済み。利用開始時は公開サイトで既存アカウントにログインしてください。
+
 ## 起動
 
 Node.js 22以上で `npm install` → `npm run dev`。表示されたローカルURLを開きます。

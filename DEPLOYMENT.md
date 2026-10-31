@@ -1,5 +1,11 @@
 # GitHub Pagesでの公開
 
+公開URL: https://studymaster-itsuaki.github.io/health-control-tool/
+
+リポジトリ: https://github.com/studymaster-itsuaki/health-control-tool
+
+2026-10-31: GitHub上の28件のテスト、ビルド、Pagesデプロイ成功。公開HTML・JS・CSS・manifest・サービスワーカー・アイコンの内容が検証済みビルドと一致することを確認しました。公開ページのログイン画面表示も確認済みです。本人アカウントでの公開先ログイン操作は本人にて実施します。
+
 リポジトリ直下がViteプロジェクトです。GitHubのSettings → Pages → Build and deployment → Sourceは **GitHub Actions** を選択します。
 mainへ反映すると28件の自動テストと本番ビルドを実行し、成功したdistだけをGitHub Pagesへ公開します。手動の再公開はActions → Test and deploy GitHub Pages → Run workflowから実行できます。
 
