@@ -28,3 +28,6 @@ test('legacy settings survive selecting master items and names are escaped',()=>
  const legacy={id:'old',name:'独自種目',detail:'昔の内容',baseScore:123};const oldWalk={id:'old-walk',name:'ウォーキング',detail:'以前の時間'};const f=new FormData();f.append('menus','walk');const menus=selectedMenus(f,[legacy,oldWalk]);assert.deepEqual(menus,[legacy,oldWalk]);
  f.append('menus','unknown');assert.throws(()=>selectedMenus(f,[legacy]));assert.match(goalSelect('foodGoal',FOOD_GOALS,'昔の目標'),/旧カスタム項目/);assert.match(priorityEditor(['旧目標']),/旧カスタム項目/);assert.match(specialEditor({specialActivity:'<script>'}),/&lt;script&gt;/);
 });
+test('other special activity is excluded from activity and habit evaluation',()=>{
+ const s=aggregateWeek({dailyLogs:[{profileId:'p',date:'2026-10-12',specialActivities:[specialActivity('other','2時間以上','')]}],exerciseLogs:[]},p,reviewWindow('2026-10-19').dates);assert.equal(s.specialPoints,0);assert.equal(s.activityDays,0);assert.equal(s.bodyDays,0);assert.equal(s.special.length,1);
+});

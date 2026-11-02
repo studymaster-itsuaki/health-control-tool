@@ -34,7 +34,7 @@ export function aggregateWeek(state,profile,dates){
  const special=rows.flatMap(r=>[...(r.specialActivity?[{date:r.date,text:`旧カスタム項目（評価対象外）：${r.specialActivity}`,points:0}]:[]),...(r.specialActivities||[]).map(a=>({date:r.date,text:specialLabel(a),...evaluateSpecial(a)}))]);
  const activityDays=new Set([...days,...special.filter(a=>a.points>0).map(a=>a.date)]).size;
  const specialPoints=special.reduce((n,a)=>n+a.points,0);
- const bodyDays=new Set([...days,...rows.filter(r=>r.bodyCare||r.specialActivity||(r.specialActivities||[]).length).map(r=>r.date)]).size;
+ const bodyDays=new Set([...days,...rows.filter(r=>r.bodyCare||r.specialActivity||(r.specialActivities||[]).some(a=>evaluateSpecial(a).points>0)).map(r=>r.date)]).size;
  const food=rows.reduce((n,r)=>n+achieved(r.food),0),optional=rows.reduce((n,r)=>n+achieved(r.optional),0);
  const grade=(n,target)=>n>=target?'◎':n>=target/2?'○':'△';
  const known=logs.length+rows.length>0;
