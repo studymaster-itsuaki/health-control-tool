@@ -1,3 +1,4 @@
+import {activityType,evaluateSpecial,specialLabel,FOOD_GOALS,OPTIONAL_GOALS} from './catalogs.js';
 import {localDate,weekDates} from './domain.js';
 import {weeklyLoad,score,resolveExercise,EXERCISES,menuFromExercise} from './exercises.js';
 export const PLAN_KEYS=['weeklyTarget','menus','foodGoal','optionalGoal'];
@@ -29,12 +30,15 @@ export function aggregateWeek(state,profile,dates){
   t.presented=Math.max(observed.size,t.changed);t.presentationNote='記録・変更履歴で確認できた提示のみ';
   t.suggestion=t.external>t.personal?'時間・場所に合う設計へ見直す候補です。':t.personal>t.external?'外す前に、短時間・少ない量にする案を試せます。':'理由を確認し、続けやすい形を一緒に選びましょう。';
  }
- const categories=Object.fromEntries(['normal','light','care'].map(k=>[k,rows.filter(r=>r.activityType===k).length]));
- const bodyDays=new Set([...days,...rows.filter(r=>r.bodyCare||r.activityType||r.specialActivity).map(r=>r.date)]).size;
+ const categories=Object.fromEntries(['normal','light','care'].map(k=>[k,dates.filter(date=>activityType(logs.filter(l=>l.date===date),profile)===k).length]));
+ const special=rows.flatMap(r=>[...(r.specialActivity?[{date:r.date,text:`旧カスタム項目（評価対象外）：${r.specialActivity}`,points:0}]:[]),...(r.specialActivities||[]).map(a=>({date:r.date,text:specialLabel(a),...evaluateSpecial(a)}))]);
+ const activityDays=new Set([...days,...special.filter(a=>a.points>0).map(a=>a.date)]).size;
+ const specialPoints=special.reduce((n,a)=>n+a.points,0);
+ const bodyDays=new Set([...days,...rows.filter(r=>r.bodyCare||r.specialActivity||(r.specialActivities||[]).length).map(r=>r.date)]).size;
  const food=rows.reduce((n,r)=>n+achieved(r.food),0),optional=rows.reduce((n,r)=>n+achieved(r.optional),0);
  const grade=(n,target)=>n>=target?'◎':n>=target/2?'○':'△';
  const known=logs.length+rows.length>0;
- return {recordedDays:new Set([...rows.map(r=>r.date),...logs.map(r=>r.date)]).size,exercise:{completeDays:completeDays.size,activeDays:days.size,target:rows.find(r=>r.weeklyTargetSnapshot)?.weeklyTargetSnapshot||profile.weeklyTarget},food:{value:food,recorded:rows.filter(r=>r.food).length,target:7},optional:{value:optional,recorded:rows.filter(r=>r.optional).length,target:profile.optionalGoal?7:0},categories,bodyDays,special:rows.filter(r=>r.specialActivity).map(r=>({date:r.date,text:r.specialActivity})),load,strengthLoad,changes:{total:changes.length,external:changes.filter(c=>c.reason==='external').length,personal:changes.filter(c=>c.reason==='personal').length},tendencies:[...tendencies.values()],ratings:[['筋力刺激',new Set(strength.filter(r=>score(r)>0).map(r=>r.date)).size,Math.min(3,profile.weeklyTarget)],['活動量',days.size,profile.weeklyTarget],['習慣継続',bodyDays,profile.weeklyTarget],['食事目標',food,7]].map(([label,n,target])=>({label,value:(label==='食事目標'?rows.some(r=>r.food):label==='筋力刺激'?strength.length>0:known)?grade(n,target):'—'}))};
+ return {recordedDays:new Set([...rows.map(r=>r.date),...logs.map(r=>r.date)]).size,exercise:{completeDays:completeDays.size,activeDays:days.size,target:rows.find(r=>r.weeklyTargetSnapshot)?.weeklyTargetSnapshot||profile.weeklyTarget},food:{value:food,recorded:rows.filter(r=>r.food).length,target:7},optional:{value:optional,recorded:rows.filter(r=>r.optional).length,target:profile.optionalGoal?7:0},categories,bodyDays,special,specialPoints,activityDays,load,strengthLoad,changes:{total:changes.length,external:changes.filter(c=>c.reason==='external').length,personal:changes.filter(c=>c.reason==='personal').length},tendencies:[...tendencies.values()],ratings:[['筋力刺激',new Set(strength.filter(r=>score(r)>0).map(r=>r.date)).size,Math.min(3,profile.weeklyTarget)],['活動量',activityDays,profile.weeklyTarget],['習慣継続',bodyDays,profile.weeklyTarget],['食事目標',food,7]].map(([label,n,target])=>({label,value:(label==='食事目標'?rows.some(r=>r.food):label==='筋力刺激'?strength.length>0:known)?grade(n,target):'—'}))};
 }
 export function generateProposal(profile,summary,input){
  const values=structuredClone(planValues(profile));const reasons={};
@@ -52,6 +56,8 @@ export function generateProposal(profile,summary,input){
 }
 export function approveReview({profile,summary,input,proposal,decisions,today}){
  const window=reviewWindow(today);const values=planValues(profile);
+ for(const [key,options] of [['foodGoal',FOOD_GOALS],['optionalGoal',OPTIONAL_GOALS]]){const d=decisions[key];if(d?.mode==='edit'&&!options.includes(d.value)&&d.value!==profile[key]&&d.value!==proposal.find(i=>i.key===key)?.value)throw new Error('登録済み目標から選択してください');}
+ const menuEdit=decisions.menus;if(menuEdit?.mode==='edit'&&Array.isArray(menuEdit.value)&&menuEdit.value.some(m=>!resolveExercise(m)&&![...profile.menus,...(proposal.find(i=>i.key==='menus')?.value||[])].some(old=>JSON.stringify(old)===JSON.stringify(m))))throw new Error('登録済み種目から選択してください');
  for(const item of proposal){const d=decisions[item.key];if(!d||!['adopt','edit','keep'].includes(d.mode))throw new Error('各項目の扱いを選んでください');if(d.mode!=='keep')values[item.key]=d.mode==='edit'?d.value:item.value}
  if(!Number.isInteger(values.weeklyTarget)||values.weeklyTarget<1||values.weeklyTarget>7)throw new Error('週の回数は1〜7日で入力してください');
  if(!values.foodGoal?.trim()||values.foodGoal.length>200||(values.optionalGoal||'').length>200)throw new Error('目標を200文字以内で入力してください');

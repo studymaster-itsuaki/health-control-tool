@@ -1,3 +1,4 @@
+import {specialActivity} from '../src/catalogs.js';
 // Uses only synthetic, temporary accounts and records. Never logs passwords or tokens.
 import {readFile,writeFile} from 'node:fs/promises';
 import {randomUUID,randomBytes} from 'node:crypto';
@@ -50,7 +51,7 @@ try{
  const otherProfile=`users/${owner.localId}/profiles/other-${runId}`;
  const samples=[
   [profile,fields(sampleProfile)],
-  [`${profile}/dailyLogs/2000-01-01`,fields({date:'2000-01-01',food:'partial',menuOverrides:{[menu.id]:replacement},menuChanges:[changeEntry([menu],[replacement],'external','2000-01-01')],presentedMenus:[menu]})],
+  [`${profile}/dailyLogs/2000-01-01`,fields({date:'2000-01-01',food:'partial',specialActivity:'旧カスタム活動',specialActivities:[specialActivity('theme-park','2時間以上',20000),specialActivity('other','15分未満','')],activityType:'normal',menuOverrides:{[menu.id]:replacement},menuChanges:[changeEntry([menu],[replacement],'external','2000-01-01')],presentedMenus:[menu]})],
   [`${profile}/exerciseLogs/check`,fields(workout)],
   [`${profile}/weeklyReviews/check`,fields({profileId:sampleProfile.id,status:'approved',weekStart:'1999-12-27',weeklyPlan:{effectiveFrom:'2000-01-10',values:{weeklyTarget:2,menus:[menu],foodGoal:'テスト目標',optionalGoal:''}}})],
   [otherProfile,fields({...sampleProfile,id:`other-${runId}`,name:'分離確認'})],
